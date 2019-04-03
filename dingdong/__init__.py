@@ -1,0 +1,1 @@
+from dingdong.wx_reminder import wx_reminder
