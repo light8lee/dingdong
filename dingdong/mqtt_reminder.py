@@ -1,3 +1,4 @@
+import paho.mqtt.client as mqtt
 import itchat
 import datetime
 import traceback
@@ -6,16 +7,18 @@ import socket
 
 DATE_FORMAT = "%Y-%m-%d %H:%M:%d"
 
-
-def wx_reminder(to_user: str='filehelper', enable_cmd_qr: int=1):
-    """ wechat reminder decorator
+def mqtt_reminder(host: str='localhost', port: int=1883, topic: str='dingdong', qos: int=1):
+    """mqtt reminder decorator
     
     Keyword Arguments:
-        to_user {str} -- That wechat id you want to remind (default: {'filehelper'})
-        enable_cmd_qr {int} -- command scale factor, can be: -1/1/2 (default: {1})
+        host {str} -- mqtt server host (default: {'localhost'})
+        port {int} -- mqtt server port (default: {1883})
+        topic {str} -- mqtt topic that will be published (default: {'dingdong'})
+        qos {int} -- qos of mqtt, can be 0/1 (default: {1})
     """
-
-    itchat.auto_login(hotReload=True, enableCmdQR=enable_cmd_qr)
+    client = mqtt.Client()
+    client.connect(host, port, 60)
+    print(client)
     def decorator_sender(func):
         @functools.wraps(func)
         def wrapper_sender(*args, **kwargs):
@@ -28,7 +31,7 @@ def wx_reminder(to_user: str='filehelper', enable_cmd_qr: int=1):
                         'Main call: %s' % func_name,
                         'Starting date: %s' % start_time.strftime(DATE_FORMAT)]
             content = '\n'.join(contents)
-            itchat.send(content, toUserName=to_user)
+            client.publish(topic, content, qos)
 
             try:
                 value = func(*args, **kwargs)
@@ -41,7 +44,8 @@ def wx_reminder(to_user: str='filehelper', enable_cmd_qr: int=1):
                             'End date: %s' % end_time.strftime(DATE_FORMAT),
                             'Training duration: %s' % str(elapsed_time)]
                 content = '\n'.join(contents)
-                itchat.send(content, toUserName=to_user)
+                client.publish(topic, content, qos)
+                client.disconnect()
                 return value
 
             except Exception as ex:
@@ -58,7 +62,8 @@ def wx_reminder(to_user: str='filehelper', enable_cmd_qr: int=1):
                             "Traceback:",
                             '%s' % traceback.format_exc()]
                 content = '\n'.join(contents)
-                itchat.send(content, toUserName=to_user)
+                client.publish(topic, content, qos)
+                client.disconnect()
                 raise ex
 
         return wrapper_sender

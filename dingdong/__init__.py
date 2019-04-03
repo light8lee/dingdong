@@ -1,1 +1,2 @@
 from dingdong.wx_reminder import wx_reminder
+from dingdong.mqtt_reminder import mqtt_reminder
