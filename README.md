@@ -1,7 +1,7 @@
 # dingdong
 Dingdong, your program ends!
 
-This little project was inspired by the projects of [knockknock](https://github.com/huggingface/knockknock) and [itchat](https://github.com/littlecodersh/ItChat). It helps you keeping track the status of your programs on your wechat.
+This little project was inspired by the projects of [knockknock](https://github.com/huggingface/knockknock) and [itchat](https://github.com/littlecodersh/ItChat). It helps you keeping tracking the status of your programs on your wechat.
 
 
 ## Requirements
@@ -21,7 +21,7 @@ python setup.py install
 Just like the examples in `test.py`, you need to add the decorator ahead of your function:
 
 ```python
-@wx_reminder(to_user='wechat_id', enable_cmd_qr=scale)
+@wx_reminder(to_user='wechat_id', enable_cmd_qr=1)
 def test_correct():
     print('hello there')
 ```
